@@ -5,3 +5,4 @@ class Usuario {
     Email;
     TipoUsuario;
 }
+export default Usuario;
