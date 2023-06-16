@@ -4,10 +4,10 @@ class Usuario_Services{
     
 getAllUsuarios = async () => {
     let returnArray = null;
-    console.log('Estoy en UsuarioServices.getAll()');
+    console.log('Estoy en UsuarioServices.getAllUsuarios    ()');
     try {
         let pool = await sql.connect(config);
-       let result = await pool.request().query("SELECT * FROM Usuario WHERE ");
+       let result = await pool.request().query("SELECT * FROM Usuario ");
        returnArray = result.recordsets[0];
     }
     catch (error){
@@ -21,7 +21,7 @@ getAllUsuarios = async () => {
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()
-            .input('pNombre', sql.Text, nombre)
+            .input('pNombre', sql.VarChar, nombre)
             .query('SELECT * FROM Usuario WHERE NombreUsuario = @pNombre');
             returnEntity = result.recordsets[0][0];
         } catch (error) {

@@ -17,14 +17,34 @@ app.get('/', (req,res)=>{
 app.listen(port,()=> {
     console.log(`Pagina abierte en el puerto ${port}`)
 })
+
+
+
 async function getByName(nombre){
     let data;
     data = await svcUsuario.getByName(nombre)
     console.log(data);
+    return data
 }
-app.get('/usuariosXNombre',async (req,res) =>{
-    let nombre = req.query.usuario
+
+app.get('/usuarios/:name',async (req,res) =>{
+    console.log("hola")
+    let nombre = req.params.name
     console.log(nombre)
     const UsuarioPorNombre = await getByName(nombre);
     return res.status(200).json(UsuarioPorNombre)
 })  
+
+
+
+
+
+async function getAll(){
+    let data = await svcUsuario.getAllUsuarios()
+    console.log(data);
+    return data
+}
+app.get('/usuarios',async (req,res) =>{
+    const UsuariosGetAll = await getAll()
+    return res.status(200).json(UsuariosGetAll)
+})
