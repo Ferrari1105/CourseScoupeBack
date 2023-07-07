@@ -50,8 +50,9 @@ app.get('/usuarios',async (req,res) =>{
   app.post("/usuarios", async (req, res) => {
     try {
         console.log("req.body", req.body)
-      const newUser = await new Usuario_Services().insertUsuario(req.body)
-      
+        const newUser = await new Usuario_Services().insertUsuario(req.body)
+        const token = auth.createToken(newUser);
+        console.log(token);
       return res.status(200).json(newUser);
     } catch (error) {
         console.error(error);
