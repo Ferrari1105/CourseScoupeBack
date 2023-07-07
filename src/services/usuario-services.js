@@ -4,7 +4,7 @@ class Usuario_Services{
     
 getAllUsuarios = async () => {
     let returnArray = null;
-    console.log('Estoy en UsuarioServices.getAllUsuarios    ()');
+
     try {
         let pool = await sql.connect(config);
        let result = await pool.request().query("SELECT * FROM Usuario ");
@@ -17,7 +17,7 @@ getAllUsuarios = async () => {
     }
     getByName = async (nombre) => {
         let returnEntity = null;
-        console.log('Estoy en: GetByName');
+
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()
@@ -32,17 +32,19 @@ getAllUsuarios = async () => {
     
     insertUsuario = async (Usuario) => {
         let rowsAffected = 0;
-        console.log('Estoy en: insertUsuario');
+        let newUser = null;
+
         try {
             let pool = await sql.connect(config);
-            let result = await pool.request()
-            .query(`INSERT INTO Usuario (NombreUsuario, Contraseña, Email, TipoUsuario)
-            VALUES ('${Usuario.NombreUsuario}', '${Usuario.Contraseña}', '${Usuario.Email}', '${Usuario.TipoUsuario}')`);
+            let result = await pool.request()            
+            .query(`INSERT INTO Usuario (NombreUsuario, Contraseña, Email)
+            VALUES ('${Usuario.NombreUsuario}', '${Usuario.Contraseña}', '${Usuario.Email}')`);
             rowsAffected = result.rowsAffected;
+            newUser = await this.getByName(Usuario.NombreUsuario);
         } catch (error) {
             console.log(error);
         }
-        return rowsAffected;
+        return newUser;
     }
 }
     

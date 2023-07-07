@@ -1,9 +1,10 @@
 import express from "express";
 import Usuario_Services from './src/services/usuario-services.js'
 import cors from 'cors'
+import jwtservice from "./middleware/auth.js";
 
+const auth = new jwtservice();
 const svcUsuario = new Usuario_Services();
-
 const app= express();
 const port= 3000;
 app.use(cors())
@@ -23,28 +24,38 @@ app.listen(port,()=> {
 async function getByName(nombre){
     let data;
     data = await svcUsuario.getByName(nombre)
-    console.log(data);
+
     return data
 }
 
 app.get('/usuarios/:name',async (req,res) =>{
-    console.log("hola")
+
     let nombre = req.params.name
-    console.log(nombre)
+
     const UsuarioPorNombre = await getByName(nombre);
     return res.status(200).json(UsuarioPorNombre)
 })  
 
-
-
-
-
 async function getAll(){
     let data = await svcUsuario.getAllUsuarios()
-    console.log(data);
+
     return data
 }
 app.get('/usuarios',async (req,res) =>{
     const UsuariosGetAll = await getAll()
     return res.status(200).json(UsuariosGetAll)
 })
+
+
+  app.post("/usuarios", async (req, res) => {
+    try {
+        console.log("req.body", req.body)
+      const newUser = await new Usuario_Services().insertUsuario(req.body)
+      
+      return res.status(200).json(newUser);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json("Error en el servidor");
+    }
+});
+  app.use(auth.checktoken);
