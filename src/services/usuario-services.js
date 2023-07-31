@@ -33,14 +33,14 @@ getAllUsuarios = async () => {
     insertUsuario = async (Usuario) => {
         let rowsAffected = 0;
         let newUser = null;
-
+        console.log("usu", Usuario)
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()            
             .query(`INSERT INTO Usuario (NombreUsuario, Contraseña, Email)
             VALUES ('${Usuario.nombre}', '${Usuario.contraseña}', '${Usuario.mail}')`);
             rowsAffected = result.rowsAffected;
-            newUser = await this.getByName(Usuario.NombreUsuario);
+            newUser = await this.getByName(Usuario.nombre);
         } catch (error) {
             console.log(error);
         }

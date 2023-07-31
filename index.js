@@ -45,14 +45,15 @@ app.get('/usuarios',async (req,res) =>{
     const UsuariosGetAll = await getAll()
     return res.status(200).json(UsuariosGetAll)
 })
-
+//hacerlo /login y que no inserte sino qeu seleccione de la base de datos y agarrrar este sacar lo de jwt para el crear usuario
 
   app.post("/usuarios", async (req, res) => {
     try {
         console.log("req.body", req.body)
         const newUser = await new Usuario_Services().insertUsuario(req.body)
+        console.log("userss", newUser)
         const token = auth.createToken(newUser);
-        console.log(token);
+        console.log("token", token);
       return res.status(200).json(newUser);
     } catch (error) {
         console.error(error);

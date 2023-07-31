@@ -3,7 +3,7 @@ import moment from "moment"
 class jwtservice {
     createToken = (user) => {
         let payload = {
-            userId: user.IdUsuario, //error
+            usario: user, //error
             createAt: moment().unix(),
             expiresAt:moment().add(1,'day').unix()
         }
