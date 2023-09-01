@@ -17,12 +17,24 @@ getAllCursos = async () => {
     }
     getByName = async (NombreDelCurso) => {
         let returnEntity = null;
-
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()
             .input('pNombreDelCurso', sql.VarChar, NombreDelCurso)
             .query('SELECT * FROM Cursos WHERE NombreDelCurso = @pNombreDelCurso');
+            returnEntity = result.recordsets[0][0];
+        } catch (error) {
+            console.log(error);
+        }
+        return returnEntity;
+    }
+    getByID = async (idCurso) => {
+        let returnEntity = null;
+        try {
+            let pool = await sql.connect(config);
+            let result = await pool.request()
+            .input('pidCurso', sql.Int ,idCurso)
+            .query('SELECT * FROM Cursos WHERE idCurso = @pidCurso');
             returnEntity = result.recordsets[0][0];
         } catch (error) {
             console.log(error);
