@@ -31,14 +31,18 @@ app.get('/cursos', async (req, res) => {
     const CursosGetAll = await getAllCursos()
     return res.status(200).json(CursosGetAll)
 })
+app.get('/Cursos/:id', async (req, res) => {
+    console.log("req.body", req.body)
+    let id = req.params.id
+    let CursoPorID;
+    CursoPorID = await svcCursos.getByID(id)
+    return res.status(200).json(CursoPorID)
+})
 app.post("/MCrearCurso3", async (req, res) => {
     try {
         console.log("req.body", req.body)
-        const newUser = await new Cursos_Services().inser(req.body)
-        console.log("userss", newUser)
-        const token = auth.createToken(newUser);
-        console.log("token", token);
-        return res.status(200).json(newUser);
+        const newCurso = await new Cursos_Services().insertCurso(req.body)
+        return res.status(200).json(newCurso);
     } catch (error) {
         console.error(error);
         return res.status(500).json("Error en el servidor");

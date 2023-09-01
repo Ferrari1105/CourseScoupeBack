@@ -43,19 +43,19 @@ getAllCursos = async () => {
     }
     insertCurso = async (Curso) => {
         let rowsAffected = 0;
-        let newUser = null;
-        console.log("usu", Curso)
+        let newCurso = null;
+        console.log("Curso", Curso)
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()            
             .query(`INSERT INTO Cursos (NombreDelCurso, ResumenCurso, PrecioDelCurso)
-            VALUES ('${Curso.NombreDelCurso}', '${Curso.ResumenCurso}', '${Curso.PrecioDelCurso}')`);
+            VALUES ('${Curso.NombreDelCurso}', '${Curso.ResumenCurso}', '${Curso.precio}')`);
             rowsAffected = result.rowsAffected;
-            newUser = await this.getByName(Curso.NombreDelCurso);
+            newCurso = await this.getByName(Curso.NombreDelCurso);
         } catch (error) {
             console.log(error);
         }
-        return newUser;
+        return newCurso;
     }
 }
     
