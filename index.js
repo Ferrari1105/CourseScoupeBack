@@ -31,7 +31,19 @@ app.get('/cursos', async (req, res) => {
     const CursosGetAll = await getAllCursos()
     return res.status(200).json(CursosGetAll)
 })
-    
+app.post("/MCrearCurso3", async (req, res) => {
+    try {
+        console.log("req.body", req.body)
+        const newUser = await new Cursos_Services().inser(req.body)
+        console.log("userss", newUser)
+        const token = auth.createToken(newUser);
+        console.log("token", token);
+        return res.status(200).json(newUser);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json("Error en el servidor");
+    }
+});
 //
 //
 /*
