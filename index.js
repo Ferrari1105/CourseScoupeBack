@@ -21,14 +21,18 @@ app.listen(port, () => {
     console.log(`Pagina abierte en el puerto ${port}`)
 })
 
+//
+/*
+hacer que el precio se haga un toint para poder guardarlo como int en la base de datos o hacer que la base de datos en la parte de precio reciba un texto o varchar(50)
 
-async function getAllCursos() {
-    let data = await svcCursos.getAllCursos()
 
-    return data
-}
+Ponerle allow nulls a todo lo que falte configurar para poder probar bien la aplicacion
+
+
+*/
+//
 app.get('/cursos', async (req, res) => {
-    const CursosGetAll = await getAllCursos()
+    const CursosGetAll = await svcCursos.getAllCursos()
     return res.status(200).json(CursosGetAll)
 })
 app.get('/Cursos/:id', async (req, res) => {
@@ -48,6 +52,20 @@ app.post("/MCrearCurso3", async (req, res) => {
         return res.status(500).json("Error en el servidor");
     }
 });
+
+app.get("/Categorias", async (req, res) => {
+     const CategoriaGetAll = await svcCursos.getAllCategorias()
+     return res.status(200).json(CategoriaGetAll)
+});  
+app.get("/Areas", async (req, res) => {
+     const AreaGetAll = await svcCursos.getAllAreas()
+     return res.status(200).json(AreaGetAll)
+});  
+app.get("/Idiomas", async (req, res) => {
+     const idiomasGetAll = await svcCursos.getAllIdiomas()
+     return res.status(200).json(idiomasGetAll)
+});  
+
 //
 //
 /*

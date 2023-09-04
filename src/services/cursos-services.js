@@ -15,6 +15,45 @@ getAllCursos = async () => {
     }
     return returnArray;
     }
+    getAllCategorias = async () => {
+        let returnArray = null;
+
+        try {
+            let pool = await sql.connect(config);
+            let result = await pool.request().query("SELECT * FROM Categoria");
+            returnArray = result.recordsets[0];
+        }
+        catch (error) {
+            console.log(error)
+        }
+        return returnArray;
+    }
+    getAllAreas = async () => {
+        let returnArray = null;
+
+        try {
+            let pool = await sql.connect(config);
+            let result = await pool.request().query("SELECT * FROM Area");
+            returnArray = result.recordsets[0];
+        }
+        catch (error) {
+            console.log(error)
+        }
+        return returnArray;
+    }
+    getAllIdiomas = async () => {
+        let returnArray = null;
+
+        try {
+            let pool = await sql.connect(config);
+            let result = await pool.request().query("SELECT * FROM Idioma");
+            returnArray = result.recordsets[0];
+        }
+        catch (error) {
+            console.log(error)
+        }
+        return returnArray;
+    }
     getByName = async (NombreDelCurso) => {
         let returnEntity = null;
         try {
