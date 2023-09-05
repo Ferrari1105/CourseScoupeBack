@@ -1,20 +1,20 @@
 USE [master]
 GO
 
--- Primero hay que crear la base de datos 'app-reportes'
+-- Primero hay que crear la base de datos 'ProyectoCourseScope'
 
 IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE [name] = N'Reportes')
 BEGIN
     PRINT 'Creando Login'
     CREATE LOGIN [Reportes] WITH 
         PASSWORD = N'Reportes1234', 
-        DEFAULT_DATABASE = [app-reportes], 
+        DEFAULT_DATABASE = [ProyectoCourseScope], 
         CHECK_EXPIRATION = OFF, 
         CHECK_POLICY = OFF
 END
 GO
 
-USE [app-reportes]
+USE [ProyectoCourseScope]
 IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE [name] = N'Reportes')
 BEGIN
     PRINT 'Creando User'
@@ -23,18 +23,6 @@ BEGIN
 END 
 GO
 
-
-
-
-
-
-
-
-
-
-DB_USER            = "Reportes"
-DB_PASSWORD        = "Reportes1234"
-DB_SERVER       = "localhost"
 
 
 
