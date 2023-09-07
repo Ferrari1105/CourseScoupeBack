@@ -23,11 +23,8 @@ app.listen(port, () => {
 
 //
 /*
-hacer que el precio se haga un toint para poder guardarlo como int en la base de datos o hacer que la base de datos en la parte de precio reciba un texto o varchar(50)
-
-
-Ponerle allow nulls a todo lo que falte configurar para poder probar bien la aplicacion
-
+Preguntas a Juli
+id lecciones tiene que ser uno a muchos o muchos a muchos y como se hace
 
 */
 //
@@ -36,15 +33,23 @@ app.get('/cursos', async (req, res) => {
     return res.status(200).json(CursosGetAll)
 })
 app.get('/Cursos/:id', async (req, res) => {
-    console.log("req.body", req.body)
+    //console.log("req.body", req.body)
     let id = req.params.id
     let CursoPorID;
     CursoPorID = await svcCursos.getByID(id)
     return res.status(200).json(CursoPorID)
 })
+app.post('/CursoProcesado', async (req, res) => {
+    //console.log("req.body", req.body)
+    let curso = req.body
+    console.log("curso", curso) 
+    let cursoNoId = await svcCursos.getCursosProcesados(curso)
+    console.log("cursoNoId", cursoNoId)
+    return res.status(200).json(cursoNoId)
+})
 app.post("/MCrearCurso3", async (req, res) => {
     try {
-        console.log("req.body", req.body)
+        //console.log("req.body", req.body)
         const newCurso = await new Cursos_Services().insertCurso(req.body)
         return res.status(200).json(newCurso);
     } catch (error) {
@@ -103,11 +108,11 @@ app.get('/usuarios', async (req, res) => {
 
 app.post("/usuarios", async (req, res) => {
     try {
-        console.log("req.body", req.body)
+       // console.log("req.body", req.body)
         const newUser = await new Usuario_Services().insertUsuario(req.body)
-        console.log("userss", newUser)
+       // console.log("userss", newUser)
         const token = auth.createToken(newUser);
-        console.log("token", token);
+       // console.log("token", token);
         return res.status(200).json(newUser);
     } catch (error) {
         console.error(error);
