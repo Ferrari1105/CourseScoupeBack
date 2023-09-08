@@ -39,11 +39,10 @@ app.get('/Cursos/:id', async (req, res) => {
     CursoPorID = await svcCursos.getByID(id)
     return res.status(200).json(CursoPorID)
 })
-app.post('/CursoProcesado', async (req, res) => {
-    //console.log("req.body", req.body)
-    let curso = req.body
-    console.log("curso", curso) 
-    let cursoNoId = await svcCursos.getCursosProcesados(curso)
+app.get('/CursoProcesado/:id', async (req, res) => {
+    let idcurso = req.params.id
+    console.log("id", idcurso)
+    let cursoNoId = await svcCursos.getCursosProcesados(idcurso)
     console.log("cursoNoId", cursoNoId)
     return res.status(200).json(cursoNoId)
 })

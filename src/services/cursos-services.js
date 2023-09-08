@@ -3,6 +3,7 @@ import sql from 'mssql'
 
 class Cursos_Services{
     getCursosProcesados = async (curso) => {
+        let cursoDelFont = await this.getByID(curso);
         const cursoNoId = {
             Adelanto:"",
             HechoConIa:"",
@@ -22,12 +23,12 @@ class Cursos_Services{
             cantLecciones:""
           };
         try {
-            cursoNoId.Adelanto = curso.Adelanto;
-            cursoNoId.HechoConIa = curso.HechoConIa;
-            cursoNoId.NombreDelCurso = curso.NombreDelCurso;
-            cursoNoId.PortadaCurso = curso.PortadaCurso;
-            cursoNoId.PrecioDelCurso = curso.PrecioDelCurso;
-            cursoNoId.ResumenCurso = curso.ResumenCurso;
+            cursoNoId.Adelanto = cursoDelFont.Adelanto;
+            cursoNoId.HechoConIa = cursoDelFont.HechoConIa;
+            cursoNoId.NombreDelCurso = cursoDelFont.NombreDelCurso;
+            cursoNoId.PortadaCurso = cursoDelFont.PortadaCurso;
+            cursoNoId.PrecioDelCurso = cursoDelFont.PrecioDelCurso;
+            cursoNoId.ResumenCurso = cursoDelFont.ResumenCurso;
             //cursoNoId.NivelCurso = curso.NivelCurso;
             //cursoNoId.NumeroEstudiantes = curso.NumeroEstudiantes;
             //cursoNoId.Valoracion = curso.Valoracion;
@@ -35,11 +36,11 @@ class Cursos_Services{
             //cursoNoId.cantLecciones = curso.cantLecciones;
             //cursoNoId.Creador = curso.Creador;
             let pool = await sql.connect(config);
-            let estilo = await pool.request().query(`SELECT TOP 1 NombreEstilo FROM Estilo E JOIN Cursos C on E.idEstilo=C.idEstilo where E.idEstilo = ${curso.idEstilo};`);
+            let estilo = await pool.request().query(`SELECT TOP 1 NombreEstilo FROM Estilo E JOIN Cursos C on E.idEstilo=C.idEstilo where E.idEstilo = ${cursoDelFont.idEstilo};`);
             cursoNoId.Estilo = estilo.recordsets[0][0].NombreEstilo;
-            let categorias = await pool.request().query(`SELECT TOP 1 NombreCategoria FROM Categoria CA INNER JOIN Cursos C ON CA.idCategoria = C.idCategorias WHERE C.idCategorias = ${curso.idCategorias};`);
+            let categorias = await pool.request().query(`SELECT TOP 1 NombreCategoria FROM Categoria CA INNER JOIN Cursos C ON CA.idCategoria = C.idCategorias WHERE C.idCategorias = ${cursoDelFont.idCategorias};`);
             cursoNoId.Categorias = categorias.recordsets[0][0].NombreCategoria;
-            let areas = await pool.request().query(`SELECT TOP 1 NombreArea FROM Area A INNER JOIN Cursos C ON A.idAreas = C.idAreas WHERE C.idAreas = ${curso.idAreas};`);
+            let areas = await pool.request().query(`SELECT TOP 1 NombreArea FROM Area A INNER JOIN Cursos C ON A.idAreas = C.idAreas WHERE C.idAreas = ${cursoDelFont.idAreas};`);
             cursoNoId.Areas = areas.recordsets[0][0].NombreArea;
             /*let idioma = await pool.request().query(`SELECT TOP 1 Idioma FROM Cursos_Idioma CI JOIN Idioma I ON CI.idIdioma = I.idIdioma JOIN Cursos C ON CI.idCurso = C.idCurso WHERE CI.idCurso = ${curso.idCurso}`);
             cursoNoId.Idioma = idioma.recordsets;*/
@@ -131,7 +132,6 @@ getAllCursos = async () => {
     insertCurso = async (Curso) => {
         let rowsAffected = 0;
         let newCurso = null;
-        console.log("Curso", Curso)
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()            
