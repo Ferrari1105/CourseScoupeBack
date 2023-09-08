@@ -24,7 +24,7 @@ class Cursos_Services{
           };
         try {
             cursoNoId.Adelanto = cursoDelFont.Adelanto;
-            cursoNoId.HechoConIa = cursoDelFont.HechoConIa;
+         //   cursoNoId.HechoConIa = cursoDelFont.HechoConIa;
             cursoNoId.NombreDelCurso = cursoDelFont.NombreDelCurso;
             cursoNoId.PortadaCurso = cursoDelFont.PortadaCurso;
             cursoNoId.PrecioDelCurso = cursoDelFont.PrecioDelCurso;
@@ -136,7 +136,7 @@ getAllCursos = async () => {
             let pool = await sql.connect(config);
             let result = await pool.request()            
             .query(`INSERT INTO Cursos (NombreDelCurso, ResumenCurso, PrecioDelCurso)
-            VALUES ('${Curso.NombreDelCurso}', '${Curso.ResumenCurso}', '${Curso.precio}')`);
+            VALUES ('${Curso.NombreDelCurso}', '${Curso.ResumenCurso}', '${Curso.PrecioDelCurso}')`);
             rowsAffected = result.rowsAffected;
             newCurso = await this.getByName(Curso.NombreDelCurso);
         } catch (error) {

@@ -48,7 +48,6 @@ app.get('/CursoProcesado/:id', async (req, res) => {
 })
 app.post("/MCrearCurso3", async (req, res) => {
     try {
-        //console.log("req.body", req.body)
         const newCurso = await new Cursos_Services().insertCurso(req.body)
         return res.status(200).json(newCurso);
     } catch (error) {
