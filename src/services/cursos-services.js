@@ -135,14 +135,14 @@ getAllCursos = async () => {
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()            
-            .query(`INSERT INTO Cursos (NombreDelCurso, ResumenCurso, PrecioDelCurso)
+            .query(`INSERT INTO Cursos (NombreDelCurso, ResumenCurso, PrecioDelCurso, HechoConIa, idCategorias, idAreas, idEstilo, idRecursosAdicionales, Adelanto, idCreador)
             VALUES ('${Curso.NombreDelCurso}', '${Curso.ResumenCurso}', '${Curso.PrecioDelCurso}')`);
             rowsAffected = result.rowsAffected;
             newCurso = await this.getByName(Curso.NombreDelCurso);
         } catch (error) {
             console.log(error);
         }
-        return newCurso;
+        return newCurso;    
     }
 }
     
