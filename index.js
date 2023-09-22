@@ -68,6 +68,10 @@ app.get("/Idiomas", async (req, res) => {
      const idiomasGetAll = await svcCursos.getAllIdiomas()
      return res.status(200).json(idiomasGetAll)
 });  
+app.get("/Estilos", async (req, res) => {
+    const EstilosGetAll = await svcCursos.getAllEstilos()
+    return res.status(200).json(EstilosGetAll)
+});  
 
 //
 //

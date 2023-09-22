@@ -103,6 +103,19 @@ getAllCursos = async () => {
         }
         return returnArray;
     }
+    getAllEstilos = async () => {
+        let returnArray = null;
+
+        try {
+            let pool = await sql.connect(config);
+            let result = await pool.request().query("SELECT * FROM Estilo");
+            returnArray = result.recordsets[0];
+        }
+        catch (error) {
+            console.log(error)
+        }
+        return returnArray;
+    }
     getByName = async (NombreDelCurso) => {
         let returnEntity = null;
         try {
@@ -130,13 +143,14 @@ getAllCursos = async () => {
         return returnEntity;
     }
     insertCurso = async (Curso) => {
+        console.log("cursololsas", Curso)
         let rowsAffected = 0;
         let newCurso = null;
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()            
-            .query(`INSERT INTO Cursos (NombreDelCurso, ResumenCurso, PrecioDelCurso, HechoConIa, idCategorias, idAreas, idEstilo, idRecursosAdicionales, Adelanto, idCreador)
-            VALUES ('${Curso.NombreDelCurso}', '${Curso.ResumenCurso}', '${Curso.PrecioDelCurso}')`);
+            .query(`INSERT INTO Cursos (NombreDelCurso,HechoConIa,idCategorias,idAreas,idEstilo,PrecioDelCurso, ResumenCurso, PortadaCurso,idCreador )
+            VALUES ('${Curso.NombreDelCurso}','${Curso.HechoConIa}','${Curso.idCategorias}','${Curso.idAreas}','${Curso.Style}','${Curso.PrecioDelCurso}', '${Curso.ResumenCurso}','${Curso.PortadaCurso}','${Curso.idCreador}')`);
             rowsAffected = result.rowsAffected;
             newCurso = await this.getByName(Curso.NombreDelCurso);
         } catch (error) {
