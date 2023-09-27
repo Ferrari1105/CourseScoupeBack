@@ -41,9 +41,7 @@ app.get('/Cursos/:id', async (req, res) => {
 })
 app.get('/CursoProcesado/:id', async (req, res) => {
     let idcurso = req.params.id
-    console.log("id", idcurso)
     let cursoNoId = await svcCursos.getCursosProcesados(idcurso)
-    console.log("cursoNoId", cursoNoId)
     return res.status(200).json(cursoNoId)
 })
 app.post("/MCrearCurso3", async (req, res) => {
