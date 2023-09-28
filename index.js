@@ -46,12 +46,53 @@ app.get('/CursoProcesado/:id', async (req, res) => {
 })
 app.post("/MCrearCurso3", async (req, res) => {
     try {
-        const newCurso = await new Cursos_Services().insertCurso(req.body)
+        const newCurso = await new Cursos_Services().updateCurso(req.body)
         return res.status(200).json(newCurso);
     } catch (error) {
         console.error(error);
         return res.status(500).json("Error en el servidor");
     }
+});
+app.post("/NuevoID", async (req, res) => {
+    try {
+        const newCursoId = await new Cursos_Services().crearCurso()
+        console.log("newCursoId", newCursoId)
+        return res.status(200).json(newCursoId);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json("Error en el servidor");
+    }
+});
+app.post("/insertLeccion", async (req, res) => {
+    // Obtener datos del cuerpo de la solicitud (por ejemplo, req.body)
+    const { idCurso, nombreLeccion, contenidoLeccion } = req.body;
+
+    // Llamar a la función para insertar la lección en la base de datos
+    const idNuevaLeccion = await svcCursos.insertLeccion(idCurso, nombreLeccion, contenidoLeccion);
+
+    // Devolver una respuesta, por ejemplo, el ID de la lección creada
+    return res.status(201).json({ idNuevaLeccion });
+});
+app.put("/updateLeccion", async (req, res) => {
+    // Obtener datos de los parámetros de la solicitud (por ejemplo, req.params) y del cuerpo de la solicitud (req.body)
+    const { idCurso, idLeccion } = req.params;
+    const { nuevoNombre, nuevoContenido } = req.body;
+
+    // Llamar a la función para actualizar la lección en la base de datos
+    await svcCursos.updateLeccion(idCurso, idLeccion, nuevoNombre, nuevoContenido);
+
+    // Devolver una respuesta, por ejemplo, un mensaje de éxito
+    return res.status(200).json({ message: "Lección actualizada con éxito." });
+});
+app.delete("/deleteLeccion", async (req, res) => {
+    // Obtener datos de los parámetros de la solicitud (por ejemplo, req.params)
+    const { idCurso, idLeccion } = req.params;
+
+    // Llamar a la función para eliminar la lección de la base de datos
+    await svcCursos.deleteLeccion(idCurso, idLeccion);
+
+    // Devolver una respuesta, por ejemplo, un mensaje de éxito
+    return res.status(200).json({ message: "Lección eliminada con éxito." });
 });
 
 app.get("/Categorias", async (req, res) => {
