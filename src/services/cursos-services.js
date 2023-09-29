@@ -226,7 +226,8 @@ getAllCursos = async () => {
     }
     updateCarrito = async (Carrito) => {
     }
-    insertCarrito = async (curso) => {   
+    insertCarrito = async (curso) => {      
+        console.log("Carrito",curso)
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()

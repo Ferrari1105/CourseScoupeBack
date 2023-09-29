@@ -39,7 +39,13 @@ app.get('/Cursos/:id', async (req, res) => {
     CursoPorID = await svcCursos.getByID(id)
     return res.status(200).json(CursoPorID)
 })
-app.get('/CursoProcesado/:id', async (req, res) => {
+app.get('/cargarCarrito', async (req, res) => {
+    let data = req.params.body
+    console.log("carritoo", data)
+    let carrito = await svcCursos.insertCarrito(data)
+    return res.status(200).json(carrito)
+})
+app.post('/CursoProcesado/:id', async (req, res) => {
     let idcurso = req.params.id
     let cursoNoId = await svcCursos.getCursosProcesados(idcurso)
     return res.status(200).json(cursoNoId)
