@@ -50,7 +50,7 @@ class Cursos_Services{
             cursoNoId.Lecciones =lecciones.recordsets[0];
             /*let idioma = await pool.request().query(`SELECT TOP 1 Idioma FROM Cursos_Idioma CI JOIN Idioma I ON CI.idIdioma = I.idIdioma JOIN Cursos C ON CI.idCurso = C.idCurso WHERE CI.idCurso = ${curso.idCurso}`);
             cursoNoId.Idioma = idioma.recordsets;*/
-            console.log(cursoNoId);
+            console.log("Cambiando el curso a: ",cursoNoId);
         }
         catch (error) {
             console.log(error)
@@ -69,6 +69,23 @@ getAllCursos = async () => {
         console.log(error)
     }
     return returnArray;
+    }
+     getAllCursosById = async (Ids) => {
+        let returnArray = [];
+        console.log("IDs:", Ids);
+    
+        for (const id of Ids) {
+            try {
+                let pool = await sql.connect(config);
+                const result = await pool.request().query(`SELECT * FROM Cursos WHERE idCurso = ${id.idCurso}`);
+                returnArray.push(...result.recordsets[0]);
+                console.log("Curso encontrado:", result.recordsets[0]);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    
+        return returnArray;
     }
     getAllCategorias = async () => {
         let returnArray = null;
@@ -130,6 +147,7 @@ getAllCursos = async () => {
                 .input('pNombreDelCurso', sql.NVarChar, NombreDelCurso) // Cambiar sql.Text a sql.NVarChar
                 .query('SELECT * FROM Cursos WHERE NombreDelCurso = CAST(@pNombreDelCurso AS nvarchar(max))'); // Convertir NombreDelCurso
             returnEntity = result.recordsets[0][0];
+            console.log("Curso Nuevo Con Id:", returnEntity)
         } catch (error) {
             console.log(error);
         }
@@ -151,30 +169,23 @@ getAllCursos = async () => {
         return returnEntity;
     }
 
+    
     crearCurso = async (Curso) => {
         let rowsAffected = 0;
         let newCurso= null;
+        console.log ("Curso a crear: ", Curso)
         try {
             let pool = await sql.connect(config);
+            console.log("golaaaaaaaaaadasdasdasd")
             let result1 = await pool.request()
             .query(`INSERT INTO Cursos (NombreDelCurso, HechoConIa, idCategorias, idAreas, idEstilo, PrecioDelCurso, ResumenCurso, PortadaCurso, idCreador)
                     VALUES ('${Curso.NombreDelCurso}', '${Curso.HechoConIa}', '${Curso.idCategorias}', '${Curso.idAreas}', '${Curso.Style}', '${Curso.PrecioDelCurso}', '${Curso.ResumenCurso}', '${Curso.PortadaCurso}', '${Curso.idCreador}')`);
             rowsAffected = result1.rowsAffected[0];
+            console.log("golaaaaaaaaaaaaa1")
            newCurso = await this.getByName(Curso.NombreDelCurso)
-            const idCursoNuevo = newCurso.idCurso;
+    
            // Utiliza consultas parametrizadas para la inserción de las lecciones
-            Curso.Lessons.map(async (curso) => {
-                try {
-                    const result = await pool.request()
-                        .input('NombreLeccion', sql.NVarChar, curso.title)
-                        .input('ContenidoLeccion', sql.NVarChar, curso.content)
-                        .input('idCursos', sql.Int, idCursoNuevo)
-                        .query(`INSERT INTO Leccion (NombreLeccion, ContenidoLeccion, idCursos) 
-                                VALUES (@NombreLeccion, @ContenidoLeccion, @idCursos)`);
-                } catch (error) {
-                    console.log(error);
-                }
-            });
+          
 
         } catch (error) {
             console.log(error);
@@ -186,7 +197,7 @@ getAllCursos = async () => {
     updateCurso = async (Curso) => {
         let rowsAffected = 0;
         let updatedCurso = null;
-        console.log(Curso);
+        console.log("updateando el curso: ",Curso);
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()
@@ -201,6 +212,18 @@ getAllCursos = async () => {
                         PortadaCurso = '${Curso.PortadaCurso}',
                         idCreador = '${Curso.idCreador}'
                         WHERE idCurso = ${Curso.idCurso}`);
+            Curso.Lessons.map(async (curso) => {
+                try {
+                    const result = await pool.request()
+                        .input('NombreLeccion', sql.NVarChar, curso.title)
+                        .input('ContenidoLeccion', sql.NVarChar, curso.content)
+                        .input('idCursos', sql.Int, idCursoNuevo)
+                        .query(`INSERT INTO Leccion (NombreLeccion, ContenidoLeccion, idCursos) 
+                                VALUES (@NombreLeccion, @ContenidoLeccion, @idCursos)`);
+                } catch (error) {
+                    console.log(error);
+                }
+            });
             rowsAffected = result.rowsAffected[0];
     
             if (rowsAffected > 0) {
@@ -216,7 +239,7 @@ getAllCursos = async () => {
         let returnArray = null;
         try {
             let pool = await sql.connect(config);
-            let result = await pool.request().query(`SELECT * FROM Carrito WHERE idUsuario = ${usuario.idUsuario}`);
+            let result = await pool.request().query(`SELECT * FROM Carrito WHERE idUsuario = ${usuario.IdUsuario}`);
             returnArray = result.recordsets[0];
         }
         catch (error) {
@@ -226,12 +249,13 @@ getAllCursos = async () => {
     }
     updateCarrito = async (Carrito) => {
     }
-    insertCarrito = async (curso) => {      
-        console.log("Carrito",curso)
+    insertCarrito = async (ids) => {      
+        console.log("Carrito",ids)
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()
-                .query(`INSERT INTO Carrito (idCurso, idUsuario) VALUES ('${curso.idCurso}', '${curso.idUsuario}')`);
+                .query(`INSERT INTO Carrito (idCurso, idUsuario) VALUES ('${ids.idCurso}', '${ids.idUsuario}')`);
+                console.log("se cargo el carrito")
         } catch (error) {
             console.log(error);
         }

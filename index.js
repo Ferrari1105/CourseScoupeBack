@@ -32,6 +32,12 @@ app.get('/cursos', async (req, res) => {
     const CursosGetAll = await svcCursos.getAllCursos()
     return res.status(200).json(CursosGetAll)
 })
+app.post('/cursosById', async (req, res) => {
+    let data = req.body
+    console.log("ids para lista Cursos:", data)
+    const CursosGetAllById = await svcCursos.getAllCursosById(data)
+    return res.status(200).json(CursosGetAllById)
+})
 app.get('/Cursos/:id', async (req, res) => {
     //console.log("req.body", req.body)
     let id = req.params.id
@@ -39,10 +45,16 @@ app.get('/Cursos/:id', async (req, res) => {
     CursoPorID = await svcCursos.getByID(id)
     return res.status(200).json(CursoPorID)
 })
-app.get('/cargarCarrito', async (req, res) => {
-    let data = req.params.body
-    console.log("carritoo", data)
+app.post('/cargarCarrito', async (req, res) => {
+    let data = req.body
+    console.log("ids para el carrito:", data)
     let carrito = await svcCursos.insertCarrito(data)
+    return res.status(200).json(carrito)
+})
+app.post('/traerCarrito', async (req, res) => {
+    let data = req.body
+    console.log("Carrito del usuario:", data)
+    let carrito = await svcCursos.getAllCarrito(data)
     return res.status(200).json(carrito)
 })
 app.post('/CursoProcesado/:id', async (req, res) => {
@@ -50,15 +62,46 @@ app.post('/CursoProcesado/:id', async (req, res) => {
     let cursoNoId = await svcCursos.getCursosProcesados(idcurso)
     return res.status(200).json(cursoNoId)
 })
-app.post("/MCrearCurso3", async (req, res) => {
-    try {
-        const newCurso = await new Cursos_Services().crearCurso(req.body)
-        return res.status(200).json(newCurso);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json("Error en el servidor");
+app.post("/CrearCurso", async (req, res) => {
+    console.log("qeu llega del body",req.body)
+    if (req.body.idCurso != null)
+    {
+        try {
+            console.log("req.body updateCurso", req.body)
+            const newCurso = await new Cursos_Services().updateCurso(req.body)
+            console.log("se updateo el curso a: ", newCurso)
+            return res.status(200).json(newCurso);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json("Error en el servidor");
+        }
+        
+       
+    }
+    else{   
+      
+        try {
+            console.log("req.body crearCurso", req.body)
+            const newCurso = await new Cursos_Services().crearCurso(req.body)
+            console.log("se creo el curso:", newCurso)
+            return res.status(200).json(newCurso);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json("Error en el servidor");
+        }
+      
+        
     }
 });
+// app.post("/UpdateCurso3", async (req, res) => {
+//     try {
+//         const newCurso = await new Cursos_Services().updateCurso(req.body)
+//         return res.status(200).json(newCurso);
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json("Error en el servidor");
+//     }
+// });
 app.post("/MActualizarCurso", async (req, res) => {
     try {
         // Supongamos que tienes una función en tu servicio llamada "actualizarCurso" para actualizar el curso.
