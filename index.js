@@ -51,10 +51,16 @@ app.post('/cargarCarrito', async (req, res) => {
     let carrito = await svcCursos.insertCarrito(data)
     return res.status(200).json(carrito)
 })
+app.post('/eliminarCursoDelCarrito', async (req, res) => {
+    let data = req.body
+    console.log("ids para el carrito:", data)
+    let carrito = await svcCursos.insertCarrito(data)
+    return res.status(200).json(carrito)
+})
 app.post('/traerCarrito', async (req, res) => {
     let data = req.body
     console.log("Carrito del usuario:", data)
-    let carrito = await svcCursos.getAllCarrito(data)
+    let carrito = await svcCursos.deleteCarrito(data)
     return res.status(200).json(carrito)
 })
 app.post('/CursoProcesado/:id', async (req, res) => {
