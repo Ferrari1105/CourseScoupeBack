@@ -67,9 +67,7 @@ app.post("/CrearCurso", async (req, res) => {
     if (req.body.idCurso != null)
     {
         try {
-            console.log("req.body updateCurso", req.body)
             const newCurso = await new Cursos_Services().updateCurso(req.body)
-            console.log("se updateo el curso a: ", newCurso)
             return res.status(200).json(newCurso);
         } catch (error) {
             console.error(error);
