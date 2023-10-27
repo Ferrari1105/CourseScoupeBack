@@ -254,8 +254,17 @@ updateCurso = async (Curso) => {
         }
         return returnArray;
     }
-    updateCarrito = async (Carrito) => {
+    deleteCarrito = async (ids) => {
+        try {
+            let pool = await sql.connect(config);
+            let result = await pool.request()
+                .query(`DELETE FROM Carrito WHERE idCurso = ${ids.idCurso} AND idUsuario = ${ids.idUsuario}`);
+            console.log("Se eliminó el carrito");
+        } catch (error) {
+            console.log(error);
+        }
     }
+    
     insertCarrito = async (ids) => {      
         console.log("Carrito",ids)
         try {
