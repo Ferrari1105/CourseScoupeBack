@@ -62,9 +62,14 @@ app.post('/eliminarCursoDelCarrito', async (req, res) => {
     let carrito = await svcCursos.deleteCarrito(data)
     return res.status(200).json(carrito)
 })
+app.post('/eliminarTodoElCarrito', async (req, res) => {
+    let data = req.body
+    console.log("ids para ELIMINAR el carrito:", data)
+    let carrito = await svcCursos.deleteTodoElCarrito(data)
+    return res.status(200).json(carrito)
+})
 app.post('/traerCarrito', async (req, res) => {
     let data = req.body
-    console.log("Carrito del usuario:", data)
     let carrito = await svcCursos.getAllCarrito(data)
     return res.status(200).json(carrito)
 })
