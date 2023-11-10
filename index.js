@@ -28,6 +28,11 @@ id lecciones tiene que ser uno a muchos o muchos a muchos y como se hace
 
 */
 //
+
+app.get('/lecciones', async (req,res) => {
+    const LeccionGetAll = await svcCursos.getAllLecciones()
+    return res.status(200).json(LeccionGetAll)
+})
 app.get('/cursos', async (req, res) => {
     const CursosGetAll = await svcCursos.getAllCursos()
     return res.status(200).json(CursosGetAll)

@@ -70,6 +70,22 @@ getAllCursos = async () => {
     }
     return returnArray;
     }
+
+    getAllLecciones = async () => {
+        let returnArray = null;
+    
+        try {
+            let pool = await sql.connect(config);
+           let result = await pool.request().query("SELECT * FROM Leccion");
+           returnArray = result.recordsets[0];
+        }
+        catch (error){
+            console.log(error)
+        }
+        return returnArray;
+        }
+
+
      getAllCursosById = async (Ids) => {
         let returnArray = [];
         console.log("IDs:", Ids);
