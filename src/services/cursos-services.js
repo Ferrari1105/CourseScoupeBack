@@ -25,6 +25,7 @@ class Cursos_Services{
             Lecciones:""
           };
         try {
+            console.log("le llega el curso" ,cursoDelFront)
             cursoNoId.idCurso = cursoDelFront.idCurso;
             cursoNoId.Adelanto = cursoDelFront.Adelanto;
          //   cursoNoId.HechoConIa = cursoDelFront.HechoConIa;
@@ -174,7 +175,6 @@ crearCurso = async (Curso) => {
     console.log("Curso a crear: ", Curso);
     try {
         let pool = await sql.connect(config);
-        console.log("golaaaaaaaaaadasdasdasd");
         let result1 = await pool.request()
             .input('NombreDelCurso', sql.NVarChar, Curso.NombreDelCurso)
             .input('HechoConIa', sql.Bit, Curso.HechoConIa)
@@ -192,7 +192,6 @@ crearCurso = async (Curso) => {
                 (@NombreDelCurso, @HechoConIa, @idCategorias, @idAreas, @Style, @PrecioDelCurso, @ResumenCurso, @PortadaCurso, @idCreador)
             `);
         rowsAffected = result1.rowsAffected[0];
-        console.log("golaaaaaaaaaaaaa1");
         newCurso = await this.getByName(Curso.NombreDelCurso);
     } catch (error) {
         console.log(error);
@@ -200,35 +199,46 @@ crearCurso = async (Curso) => {
     return newCurso;
 }
     
-
 updateCurso = async (Curso) => {
     let rowsAffected = 0;
     let updatedCurso = null;
-    console.log("updateando el curso: ", Curso);
+    console.log("Actualizando el curso: ", Curso);
     try {
         let pool = await sql.connect(config);
-        let result = await pool.request()
-            .query(`UPDATE Cursos SET 
-                    NombreDelCurso = '${Curso.NombreDelCurso}',
-                    idCategorias = ${Curso.idCategorias},
-                    idAreas = ${Curso.idAreas},
-                    idEstilo = ${Curso.Style},
-                    PrecioDelCurso = ${Curso.PrecioDelCurso},
-                    ResumenCurso = '${Curso.ResumenCurso}',
-                    PortadaCurso = '${Curso.PortadaCurso}'
-                    WHERE idCurso = ${Curso.idCurso}`);
-          Curso.Lessons.map(async (curso) => {
-    try {
-        const result = await pool.request()
-            .input('NombreLeccion', sql.NVarChar, curso.title)
-            .input('ContenidoLeccion', sql.NVarChar, curso.content)
-            .input('idCursos', sql.Int, curso.idCurso)  // Usando curso.idCurso en lugar de idCursoNuevo
-            .query(`INSERT INTO Leccion (NombreLeccion, ContenidoLeccion, idCursos) 
-                    VALUES (@NombreLeccion, @ContenidoLeccion, @idCursos)`);
-    } catch (error) {
-        console.log(error);
-    }
-});
+
+        // Actualizar la información del curso en la tabla Cursos
+        let updateCursoQuery = `
+            UPDATE Cursos SET 
+            NombreDelCurso = '${Curso.NombreDelCurso}',
+            idCategorias = ${Curso.idCategorias},
+            idAreas = ${Curso.idAreas},
+            idEstilo = ${Curso.Style},
+            PrecioDelCurso = ${Curso.PrecioDelCurso},
+            ResumenCurso = '${Curso.ResumenCurso}',
+            PortadaCurso = '${Curso.PortadaCurso}'
+            WHERE idCurso = ${Curso.idCurso}
+        `;
+
+        let result = await pool.request().query(updateCursoQuery);
+
+        // Eliminar las lecciones actuales asociadas al curso
+        await pool.request()
+            .input('idCursos', sql.Int, Curso.idCurso)
+            .query('DELETE FROM Leccion WHERE idCursos = @idCursos');
+
+        // Insertar las nuevas lecciones asociadas al curso
+        for (const leccion of Curso.Lessons) {
+            try {
+                await pool.request()
+                    .input('NombreLeccion', sql.NVarChar, leccion.title)
+                    .input('ContenidoLeccion', sql.NVarChar, leccion.content)
+                    .input('idCursos', sql.Int, Curso.idCurso)
+                    .query(`INSERT INTO Leccion (NombreLeccion, ContenidoLeccion, idCursos) 
+                            VALUES (@NombreLeccion, @ContenidoLeccion, @idCursos)`);
+            } catch (error) {
+                console.log(error);
+            }
+        }
 
         rowsAffected = result.rowsAffected[0];
 
@@ -264,6 +274,17 @@ updateCurso = async (Curso) => {
             console.log(error);
         }
     }
+    deleteTodoElCarrito = async (ids) => {
+        try {
+            let pool = await sql.connect(config);
+            let result = await pool.request()
+                .query(`DELETE FROM Carrito WHERE idUsuario = ${ids.idUsuario}`);
+            console.log("Se eliminó el carrito del usuario con id:", ids.idUsuario);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
     
     insertCarrito = async (ids) => {      
         console.log("Carrito",ids)
