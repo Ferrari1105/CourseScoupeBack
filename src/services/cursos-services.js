@@ -86,25 +86,20 @@ getAllCursos = async () => {
         return returnArray;
         }
 
-        
-        getAllLeccionesById = async (Ids) => {
-            let returnArray = [];
-            console.log("IDs:", Ids);
-        
-            for (const id of Ids) {
-                try {
-                    let pool = await sql.connect(config);
-                    const result = await pool.request().query(`SELECT * FROM Leccion WHERE idLeccion = ${id.idLeccion}`);
-                    returnArray.push(...result.recordsets[0]);
-                    console.log("Lecciones encontrados:", result.recordsets[0]);
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-        
-            return returnArray;
-        }
 
+        getLeccionesByID = async (idLeccion) => {
+        let returnEntity = null;
+        try {
+            let pool = await sql.connect(config);
+            let result = await pool.request()
+            .input('pidLeccion', sql.Int ,idLeccion)
+            .query('SELECT * FROM Leccion WHERE idLeccion = @pidLeccion');
+            returnEntity = result.recordsets[0][0];
+        } catch (error) {
+            console.log(error);
+        }
+        return returnEntity;
+    }
      getAllCursosById = async (Ids) => {
         let returnArray = [];
         console.log("IDs:", Ids);
@@ -190,6 +185,7 @@ getAllCursos = async () => {
     }
     
     
+    
     getByID = async (idCurso) => {
         let returnEntity = null;
         try {
@@ -198,6 +194,19 @@ getAllCursos = async () => {
             .input('pidCurso', sql.Int ,idCurso)
             .query('SELECT * FROM Cursos WHERE idCurso = @pidCurso');
             returnEntity = result.recordsets[0][0];
+        } catch (error) {
+            console.log(error);
+        }
+        return returnEntity;
+    }
+    getleccByID = async (idCurso) => {
+        let returnEntity = null;
+        try {
+            let pool = await sql.connect(config);
+            let result = await pool.request()
+            .input('pidCurso', sql.Int ,idCurso)
+            .query('SELECT * FROM Leccion WHERE idCursos = @pidCurso');
+            returnEntity = result.recordsets[0];
         } catch (error) {
             console.log(error);
         }
