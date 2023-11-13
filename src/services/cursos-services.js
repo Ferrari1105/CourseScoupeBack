@@ -86,6 +86,24 @@ getAllCursos = async () => {
         return returnArray;
         }
 
+        
+        getAllLeccionesById = async (Ids) => {
+            let returnArray = [];
+            console.log("IDs:", Ids);
+        
+            for (const id of Ids) {
+                try {
+                    let pool = await sql.connect(config);
+                    const result = await pool.request().query(`SELECT * FROM Leccion WHERE idLeccion = ${id.idLeccion}`);
+                    returnArray.push(...result.recordsets[0]);
+                    console.log("Lecciones encontrados:", result.recordsets[0]);
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        
+            return returnArray;
+        }
 
      getAllCursosById = async (Ids) => {
         let returnArray = [];
