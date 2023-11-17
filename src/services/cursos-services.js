@@ -135,7 +135,7 @@ getAllCursos = async () => {
                 let pool = await sql.connect(config);
                 const result = await pool.request().query(`SELECT * FROM Cursos WHERE idCurso = ${id.idCurso}`);
                 returnArray.push(...result.recordsets[0]);
-                console.log("Curso encontrado:", result.recordsets[0]);
+               // console.log("Curso encontrado:", result.recordsets[0]);
             } catch (error) {
                 console.log(error);
             }
@@ -361,6 +361,7 @@ getAllCursos = async () => {
         return returnArray;
     }
     deleteCarrito = async (ids) => {
+
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()
@@ -371,6 +372,7 @@ getAllCursos = async () => {
         }
     }
     deleteTodoElCarrito = async (ids) => {
+                console.log("ids qeu voy a eliminar yA", ids)
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()
