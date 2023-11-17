@@ -66,7 +66,7 @@ app.get('/Cursos/:id', async (req, res) => {
 })
 app.post('/cargarCarrito', async (req, res) => {
     let data = req.body
-    console.log("ids para el carrito:", data)
+    //console.log("ids para el carrito:", data)
     let carrito = await svcCursos.insertCarrito(data)
     return res.status(200).json(carrito)
 })

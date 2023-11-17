@@ -33,7 +33,7 @@ getAllUsuarios = async () => {
     insertUsuario = async (Usuario) => {
         let rowsAffected = 0;
         let newUser = null;
-        console.log(Usuario);
+        //console.log(Usuario);
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()            
