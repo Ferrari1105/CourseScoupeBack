@@ -38,6 +38,15 @@ app.get('/lecciones', async (req,res) => {
     const LeccionGetAll = await svcCursos.getAllLecciones()
     return res.status(200).json(LeccionGetAll)
 })
+app.get('/cursosTerminados', async (req, res) => {
+    const CursosGetAll = await svcCursos.getAllCursosTerminados()
+    return res.status(200).json(CursosGetAll)
+})
+app.post('/cursosByIdUsuario', async (req, res) => {
+    let data = req.body
+    const CursosGetAll = await svcCursos.getAllCursosByIdUsuario(data)
+    return res.status(200).json(CursosGetAll)
+})
 app.get('/cursos', async (req, res) => {
     const CursosGetAll = await svcCursos.getAllCursos()
     return res.status(200).json(CursosGetAll)

@@ -71,7 +71,34 @@ getAllCursos = async () => {
     }
     return returnArray;
     }
-
+    getAllCursosByIdUsuario = async (id) => {
+        let returnArray = null;
+        console.log("id del usuario:", id)
+        try {
+            let pool = await sql.connect(config);
+            let result = await pool.request()
+                .input('pidCreador', sql.Int, id.IdUsuario)  // Agregado el parámetro pidCreador
+                .query("SELECT * FROM Cursos WHERE Terminado = 0 AND idCreador = @pidCreador;");
+            returnArray = result.recordsets[0];
+        } catch (error) {
+            console.log(error);
+        }
+        return returnArray;
+    }
+    
+    getAllCursosTerminados = async () => {
+        let returnArray = null;
+    
+        try {
+            let pool = await sql.connect(config);
+           let result = await pool.request().query("SELECT * FROM Cursos WHERE Terminado = 1 ");
+           returnArray = result.recordsets[0];
+        }
+        catch (error){
+            console.log(error)
+        }
+        return returnArray;
+        }
     getAllLecciones = async () => {
         let returnArray = null;
     
@@ -212,88 +239,94 @@ getAllCursos = async () => {
         }
         return returnEntity;
     }
-crearCurso = async (Curso) => {
-    let rowsAffected = 0;
-    let newCurso = null;
-    console.log("Curso a crear: ", Curso);
-    try {
-        let pool = await sql.connect(config);
-        let result1 = await pool.request()
-            .input('NombreDelCurso', sql.NVarChar, Curso.NombreDelCurso)
-            .input('HechoConIa', sql.Bit, Curso.HechoConIa)
-            .input('idCategorias', sql.Int, Curso.idCategorias)
-            .input('idAreas', sql.Int, Curso.idAreas)
-            .input('Style', sql.Int, Curso.Style)
-            .input('PrecioDelCurso', sql.Decimal, Curso.PrecioDelCurso)
-            .input('ResumenCurso', sql.NVarChar, Curso.ResumenCurso)
-            .input('PortadaCurso', sql.NVarChar, Curso.PortadaCurso)
-            .input('idCreador', sql.Int, Curso.idCreador)
-            .query(`
-                INSERT INTO Cursos 
-                (NombreDelCurso, HechoConIa, idCategorias, idAreas, idEstilo, PrecioDelCurso, ResumenCurso, PortadaCurso, idCreador)
-                VALUES 
-                (@NombreDelCurso, @HechoConIa, @idCategorias, @idAreas, @Style, @PrecioDelCurso, @ResumenCurso, @PortadaCurso, @idCreador)
-            `);
-        rowsAffected = result1.rowsAffected[0];
-        newCurso = await this.getByName(Curso.NombreDelCurso);
-    } catch (error) {
-        console.log(error);
+    crearCurso = async (Curso) => {
+        let rowsAffected = 0;
+        let newCurso = null;
+        console.log("Curso a crear: ", Curso);
+        try {
+            let pool = await sql.connect(config);
+            let result1 = await pool.request()
+                .input('NombreDelCurso', sql.NVarChar, Curso.NombreDelCurso)
+                .input('HechoConIa', sql.Bit, Curso.HechoConIa)
+                .input('idCategorias', sql.Int, Curso.idCategorias)
+                .input('idAreas', sql.Int, Curso.idAreas)
+                .input('Style', sql.Int, Curso.Style)
+                .input('PrecioDelCurso', sql.Decimal, Curso.PrecioDelCurso)
+                .input('ResumenCurso', sql.NVarChar, Curso.ResumenCurso)
+                .input('PortadaCurso', sql.NVarChar, Curso.PortadaCurso)
+                .input('idCreador', sql.Int, Curso.idCreador)
+                .input('NumeroEstudiantes', sql.Int, Curso.NumeroEstudiantes) // Nuevo campo
+                .input('Terminado', sql.Bit, Curso.Terminado) // Nuevo campo
+                .query(`
+                    INSERT INTO Cursos 
+                    (NombreDelCurso, HechoConIa, idCategorias, idAreas, idEstilo, PrecioDelCurso, ResumenCurso, PortadaCurso, idCreador, NumeroEstudiantes, Terminado)
+                    VALUES 
+                    (@NombreDelCurso, @HechoConIa, @idCategorias, @idAreas, @Style, @PrecioDelCurso, @ResumenCurso, @PortadaCurso, @idCreador, @NumeroEstudiantes, @Terminado)
+                `);
+            rowsAffected = result1.rowsAffected[0];
+            newCurso = await this.getByName(Curso.NombreDelCurso);
+        } catch (error) {
+            console.log(error);
+        }
+        return newCurso;
     }
-    return newCurso;
-}
     
-updateCurso = async (Curso) => {
-    let rowsAffected = 0;
-    let updatedCurso = null;
-    console.log("Actualizando el curso: ", Curso);
-    try {
-        let pool = await sql.connect(config);
-
-        // Actualizar la información del curso en la tabla Cursos
-        let updateCursoQuery = `
-            UPDATE Cursos SET 
-            NombreDelCurso = '${Curso.NombreDelCurso}',
-            idCategorias = ${Curso.idCategorias},
-            idAreas = ${Curso.idAreas},
-            idEstilo = ${Curso.Style},
-            PrecioDelCurso = ${Curso.PrecioDelCurso},
-            ResumenCurso = '${Curso.ResumenCurso}',
-            PortadaCurso = '${Curso.PortadaCurso}'
-            WHERE idCurso = ${Curso.idCurso}
-        `;
-
-        let result = await pool.request().query(updateCursoQuery);
-
-        // Eliminar las lecciones actuales asociadas al curso
-        await pool.request()
-            .input('idCursos', sql.Int, Curso.idCurso)
-            .query('DELETE FROM Leccion WHERE idCursos = @idCursos');
-
-        // Insertar las nuevas lecciones asociadas al curso
-        for (const leccion of Curso.Lessons) {
-            try {
-                await pool.request()
-                    .input('NombreLeccion', sql.NVarChar, leccion.title)
-                    .input('ContenidoLeccion', sql.NVarChar, leccion.content)
-                    .input('idCursos', sql.Int, Curso.idCurso)
-                    .query(`INSERT INTO Leccion (NombreLeccion, ContenidoLeccion, idCursos) 
-                            VALUES (@NombreLeccion, @ContenidoLeccion, @idCursos)`);
-            } catch (error) {
-                console.log(error);
+    updateCurso = async (Curso) => {
+        let rowsAffected = 0;
+        let updatedCurso = null;
+        console.log("Actualizando el curso: ", Curso);
+        try {
+            let pool = await sql.connect(config);
+    
+            // Actualizar la información del curso en la tabla Cursos
+            let updateCursoQuery = `
+                UPDATE Cursos SET 
+                NombreDelCurso = '${Curso.NombreDelCurso}',
+                idCategorias = ${Curso.idCategorias},
+                idAreas = ${Curso.idAreas},
+                idEstilo = ${Curso.Style},
+                PrecioDelCurso = ${Curso.PrecioDelCurso},
+                ResumenCurso = '${Curso.ResumenCurso}',
+                PortadaCurso = '${Curso.PortadaCurso}',
+                NumeroEstudiantes = ${Curso.NumeroEstudiantes},
+                Terminado = ${Curso.Terminado ? 1 : 0} -- Cambiado a 1 si es true, 0 si es false
+                WHERE idCurso = ${Curso.idCurso}
+            `;
+    
+            let result = await pool.request().query(updateCursoQuery);
+    
+            // Eliminar las lecciones actuales asociadas al curso
+            await pool.request()
+                .input('idCursos', sql.Int, Curso.idCurso)
+                .query('DELETE FROM Leccion WHERE idCursos = @idCursos');
+    
+            // Insertar las nuevas lecciones asociadas al curso
+            for (const leccion of Curso.Lessons) {
+                try {
+                    await pool.request()
+                        .input('NombreLeccion', sql.NVarChar, leccion.title)
+                        .input('ContenidoLeccion', sql.NVarChar, leccion.content)
+                        .input('idCursos', sql.Int, Curso.idCurso)
+                        .query(`INSERT INTO Leccion (NombreLeccion, ContenidoLeccion, idCursos) 
+                                VALUES (@NombreLeccion, @ContenidoLeccion, @idCursos)`);
+                } catch (error) {
+                    console.log(error);
+                }
             }
+    
+            rowsAffected = result.rowsAffected[0];
+    
+            if (rowsAffected > 0) {
+                // La actualización tuvo éxito, puedes obtener el curso actualizado.
+                updatedCurso = await this.getByID(Curso.idCurso); // Suponiendo que tengas una función getById para obtener el curso por su ID.
+            }
+        } catch (error) {
+            console.log(error);
         }
-
-        rowsAffected = result.rowsAffected[0];
-
-        if (rowsAffected > 0) {
-            // La actualización tuvo éxito, puedes obtener el curso actualizado.
-            updatedCurso = await this.getByID(Curso.idCurso); // Suponiendo que tengas una función getById para obtener el curso por su ID.
-        }
-    } catch (error) {
-        console.log(error);
+        return updatedCurso;
     }
-    return updatedCurso;
-}
+    
+    
 
     getAllCarrito = async (usuario) => {
         let returnArray = null;
