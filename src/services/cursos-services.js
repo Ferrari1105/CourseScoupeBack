@@ -257,12 +257,12 @@ getAllCursos = async () => {
                 .input('NumeroEstudiantes', sql.Int, Curso.NumeroEstudiantes)
                 .input('Terminado', sql.Bit, Curso.Terminado)
                 .input('Adelanto', sql.NVarChar, Curso.ContenidosCurso) // Nuevo campo
-                .input('recAdicionales', sql.NVarChar, Curso.recAdicionales) // Nuevo campo
+                //.input('recAdicionales', sql.NVarChar, Curso.recAdicionales) // Nuevo campo
                 .query(`
                     INSERT INTO Cursos 
-                    (NombreDelCurso, HechoConIa, idCategorias, idAreas, idEstilo, PrecioDelCurso, ResumenCurso, PortadaCurso, idCreador, NumeroEstudiantes, Terminado, Adelanto, recAdicionales)
+                    (NombreDelCurso, HechoConIa, idCategorias, idAreas, idEstilo, PrecioDelCurso, ResumenCurso, PortadaCurso, idCreador, NumeroEstudiantes, Terminado, Adelanto)
                     VALUES 
-                    (@NombreDelCurso, @HechoConIa, @idCategorias, @idAreas, @idEstilo, @PrecioDelCurso, @ResumenCurso, @PortadaCurso, @idCreador, @NumeroEstudiantes, @Terminado, @Adelanto, @recAdicionales)
+                    (@NombreDelCurso, @HechoConIa, @idCategorias, @idAreas, @idEstilo, @PrecioDelCurso, @ResumenCurso, @PortadaCurso, @idCreador, @NumeroEstudiantes, @Terminado, @Adelanto)
                 `);
             rowsAffected = result1.rowsAffected[0];
             newCurso = await this.getByName(Curso.NombreDelCurso);
