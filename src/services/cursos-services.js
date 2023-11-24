@@ -72,18 +72,32 @@ getAllCursos = async () => {
     return returnArray;
     }
     getAllCursosByIdUsuario = async (id) => {
-        let returnArray = null;
+        let returnObject = null;
         try {
             let pool = await sql.connect(config);
             let result = await pool.request()
-                .input('pidCreador', sql.Int, id.IdUsuario)  // Agregado el parámetro pidCreador
+                .input('pidCreador', sql.Int, id.IdUsuario)
                 .query("SELECT * FROM Cursos WHERE Terminado = 0 AND idCreador = @pidCreador;");
-            returnArray = result.recordsets[0];
+    
+            returnObject = result.recordsets[0][0];
+    
+            if (returnObject) {
+                let leccionesResult = await pool.request()
+                    .input('pIdCurso', sql.Int, returnObject.idCurso)
+                    .query("SELECT NombreLeccion, ContenidoLeccion FROM Leccion WHERE idCursos = @pIdCurso;");
+    
+                returnObject.lecciones = leccionesResult.recordsets[0];
+                console.log("El curso que le falta terminar es", returnObject);
+            } else {
+                console.log("No se encontraron cursos para el usuario con ID:", id.IdUsuario);
+            }
+    
         } catch (error) {
             console.log(error);
         }
-        return returnArray;
+        return returnObject;
     }
+    
     
     getAllCursosTerminados = async () => {
         let returnArray = null;
